@@ -1,27 +1,22 @@
-from supabase import create_client, Client, ClientOptions
+import os
+
+# Disable proxy for Supabase connections before importing libraries
+os.environ['NO_PROXY'] = '*'
+os.environ['no_proxy'] = '*'
+if 'HTTP_PROXY' in os.environ:
+    del os.environ['HTTP_PROXY']
+if 'HTTPS_PROXY' in os.environ:
+    del os.environ['HTTPS_PROXY']
+if 'http_proxy' in os.environ:
+    del os.environ['http_proxy']
+if 'https_proxy' in os.environ:
+    del os.environ['https_proxy']
+
+from supabase import create_client, Client
 from config import settings
-import httpx
 
-# Configure httpx client with timeouts and no proxy
-http_client = httpx.Client(
-    timeout=30.0,
-    proxies=None,  # Explicitly disable proxies for Supabase connection
-    follow_redirects=True
-)
-
-# Initialize Supabase client with custom options
-options = ClientOptions(
-    schema="public",
-    headers={},
-    auto_refresh_token=True,
-    persist_session=True
-)
-
-supabase: Client = create_client(
-    settings.SUPABASE_URL,
-    settings.SUPABASE_SERVICE_KEY,
-    options=options
-)
+# Initialize Supabase client
+supabase: Client = create_client(settings.SUPABASE_URL, settings.SUPABASE_SERVICE_KEY)
 
 
 def get_supabase() -> Client:
